@@ -37,6 +37,12 @@ export enum RefundStatus {
   Declined = "declined",
 }
 
+export enum RefundPayoutStatus {
+  Pending = "pending",
+  Issued = "issued",
+  Failed = "failed",
+}
+
 export enum TeamMemberRole {
   Admin = "admin",
   Member = "member",
@@ -244,6 +250,8 @@ export const refunds = sqliteTable(
     reason: text("reason").notNull(),
     // Null until someone approves — a declined request refunds nothing.
     amountRefunded: integer("amount_refunded"),
+    // Null unless approved. Tracks whether the money has actually been sent.
+    payoutStatus: text("payout_status").$type<RefundPayoutStatus>(),
     requestedAt: text("requested_at")
       .notNull()
       .$defaultFn(() => new Date().toISOString()),
